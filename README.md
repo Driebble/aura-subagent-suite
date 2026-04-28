@@ -2,7 +2,7 @@
 
 A multi-agent architecture for [OpenCode](https://opencode.ai) — a coordinated system of specialized AI agents that work together through a structured pipeline to build, review, and ship features.
 
-**Author:** [Drie](https://github.com/drie) · **License:** MIT · **Year:** 2026
+**Author:** [Drie](https://github.com/driebble) · **License:** MIT · **Year:** 2026
 
 ---
 
