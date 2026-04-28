@@ -40,37 +40,37 @@ Five philosophy skills define shared quality standards that implementing and rev
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                    User Request                        │
+│                    User Request                      │
 └──────────────────────┬───────────────────────────────┘
                        │
-               ┌───────▼────────┐
-               │  aura          │  Orchestrator — decomposes goal,
-               │  (orchestrator)│  selects mode, delegates work,
-               └───────┬────────┘  tracks progress, synthesizes results
+               ┌───────▼──────────┐
+               │       aura       │  Orchestrator — decomposes goal,
+               │  (orchestrator)  │  selects mode, delegates work,
+               └───────┬──────────┘  tracks progress, synthesizes results
                        │
-          ┌────────────┼────────────────┐
-          │            │                │
-   ┌──────▼──────┐  ┌─▼──────────┐  ┌──▼──────────┐
-   │ Lightweight  │  │ Full Mode   │  │ Custom      │
-   │ (single-hop) │  │ (5 gates)   │  │ Command     │
-   └──────────────┘  └─────────────┘  └─────────────┘
+          ┌────────────┼─────────────────┐
+          │            │                 │
+   ┌──────▼───────┐  ┌─▼───────────┐  ┌──▼───────┐
+   │ Lightweight  │  │ Full Mode   │  │ Custom   │
+   │ (single-hop) │  │ (5 gates)   │  │ Command  │
+   └──────────────┘  └─────────────┘  └──────────┘
                            │
      ┌─────────────────────┼──────────────────────┐
      │                     │                      │
      ▼                     ▼                      ▼
   Explore (x2)         Design (x2)           Create (x3)
-  +──────────+      +──────────────+      +─────────────────+
-  │explore   │      │architect     │      │implementer      │
-  │researcher│      │designer      │      │writer           │
-  +──────────+      +──────────────+      │code-qa          │
-                                          +─────────────────+
-     ▼
-  Verify (x3)                     Synthesize
-  +────────────────────---+       +──────────+
-  │code-qa (test results) │       │  aura    │
-  │content-qa             │       │(results) │
-  │reviewer               │       +──────────+
-  +────────────────────---+
+  +───────────+      +─────────────+      +──────────────+
+  │ explore   │      │ architect   │      │ implementer  │
+  │ researcher│      │ designer    │      │ writer       │
+  +───────────+      +─────────────+      │ code-qa      │
+                                          +──────────────+
+          ▼
+        Verify (x3)                     Synthesize
+        +────────────────────────+       +───────────+
+        │ code-qa (test results) │       │   aura    │
+        │ content-qa             │       │ (results) │
+        │ reviewer               │       +───────────+
+        +────────────────────────+
 ```
 
 The orchestrator (`aura`) never implements anything directly. It selects the appropriate mode, fans out work to subagents via the Task tool, and compresses context between pipeline gates to manage token usage. Each subagent produces a standardized artifact file, creating a clear audit trail from start to finish.
@@ -129,14 +129,17 @@ Each gate waits for all its subagents to complete before proceeding. Context is 
 
 ## Why Aura?
 
-The Aura Subagent Suite was inspired by [**Kdco's OCX Workspace**](https://github.com/kdcokenny/opencode-workspace) — a feature-rich multi-agent harness that pioneered structured agent pipelines and philosophy-driven quality standards for OpenCode. OCX is powerful, but it comes with complexity: a separate CLI (`ocx`), package registries, profile management, model assignments, and a `opencode.jsonc` configuration that can conflict with your existing setup.
+The Aura Subagent Suite was inspired by [**Kdco's OCX Workspace**](https://github.com/kdcokenny/opencode-workspace) — a feature-rich multi-agent harness that pioneered structured agent pipelines and philosophy-driven quality standards for OpenCode. OCX is powerful, but it comes with complexity: a separate CLI (`ocx`), package registries, profile management, model assignments, and a `opencode.jsonc` configuration.
+
+In my own experience, already working within a customized OpenCode environment, I realized the real value lies in an orchestrator and subagent layer that functions natively out-of-the-box. That's why I made Aura Subagent Suite and designed it to do exactly what I was looking for.
 
 **Aura takes a different approach:**
 
 - **Plug-n-play native** — Clone the repo, drop the folders into `~/.config/opencode/`, restart OpenCode. That's it. No `ocx` to install, no registries, no profile setup, no config editing.
 - **Zero configuration** — Aura integrates directly into your existing OpenCode setup without changing anything you've already configured. Your existing agents, skills, and commands stay exactly as they are — Aura's files just sit alongside them.
-- **Lightweight and focused** — Aura is pure markdown. No plugins, no MCP servers, no npm dependencies. Just agent definitions, skills, and a command. It does one thing — orchestrate subagents — and does it cleanly.
-- **No lock-in** — Since everything is just markdown files in OpenCode's config directory, removing or modifying Aura is as simple as deleting files.
+- **Lightweight and focused** — Aura is pure markdown. No plugins, no MCP servers, no npm dependencies. Just agent definitions, skills, and a command.
+- **Highly customizable** — Since Aura is basically a collection of markdown files, every agent and skill is easy to tweak or extend. Everything follows the standard [OpenCode configuration](https://opencode.ai/docs) specifications.
+- **No lock-in** — Removing or modifying Aura is as simple as deleting files from your config directory. It stays out of your way and respects your existing setup.
 
 If OCX is a full operating system for your OpenCode environment, Aura is a well-made tool — it does what it needs to and stays out of your way.
 

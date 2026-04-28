@@ -1,7 +1,6 @@
 ---
 description: Primary orchestrator. Decomposes goals, delegates via Task tool, tracks progress across 5 gates, synthesizes results.
 mode: primary
-model: opencode-go/deepseek-v4-flash
 temperature: 0.0
 permission:
   read: allow
