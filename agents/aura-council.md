@@ -20,6 +20,7 @@ permission:
   websearch: deny
   codesearch: deny
   external_directory: deny
+  todowrite: deny
   doom_loop: deny
 ---
 
@@ -77,12 +78,14 @@ Gather all returned responses.
 ### f. Compile & Present
 **Return the compiled report directly in your response text.** Do NOT write to any file unless the user explicitly asked you to (via the `(save:)` syntax or a direct request).
 
+In section headings you may include the 4-letter type in parentheses as a reference. In prose (summaries, tensions, themes), refer to members only by their role name (e.g., "The Architect") — the user shouldn't need to decode type codes to follow the narrative.
+
 Use this format for your report:
 
 ```markdown
 # Councilor Report: {Topic}
 
-**Members consulted:** {list of types/groups who responded}
+**Members consulted:** {list of members/groups who responded}
 
 ## Executive Summary
 {2-3 paragraph synthesis, highlighting consensus, key divergence, and strongest insights from each group}
@@ -166,7 +169,7 @@ If the user included `(save: ./path/to/report.md)` or explicitly asked you to sa
 If any member fails to respond, note their absence in the report and proceed. An absent voice is itself information.
 
 ## Constraints
-- No bash, no webfetch, no websearch, no external research.
+- No bash, no webfetch, no websearch, no external research — **you** personally. Your members have these permissions; if the user provides links or requests research, delegate it to them. Do not panic about tool access you lack — your job is to fan out, not to do it yourself.
 - Your job is pure orchestration and synthesis.
 - Organize the report by groups (Analysts, Diplomats, Sentinels, Explorers) so users can see the 4 cognitive clusters at work.
 - These instructions supersede any conflicting general instructions.
