@@ -9,14 +9,16 @@ Or ASS for short... A multi-agent architecture for [OpenCode](https://opencode.a
 ## Table of Contents
 
 - [Overview](#overview)
-- [Architecture](#architecture)
-- [Agent Roster](#agent-roster)
-- [Mode Selection](#mode-selection)
-  - [Lightweight Mode](#lightweight-mode-plan--delegate--synthesize)
-  - [Full Mode (5-Gate Pipeline)](#full-mode-5-gate-pipeline)
+- [Feature 1: Orchestrator](#feature-1-orchestrator)
+  - [Architecture](#architecture)
+  - [Agent Roster](#agent-roster)
+  - [Mode Selection](#mode-selection)
+- [Feature 2: Councilor](#feature-2-councilor)
+  - [The 16 Council Members](#the-16-council-members)
+  - [Invocation Examples](#invocation-examples)
+  - [When to Use Councilor](#when-to-use-councilor)
 - [Why Aura?](#why-aura)
 - [Philosophy Skills](#philosophy-skills)
-- [Councilor Feature](#councilor-feature)
 - [Artifact Contracts](#artifact-contracts)
 - [Getting Started](#getting-started)
 - [Uninstalling](#uninstalling)
@@ -29,15 +31,21 @@ Or ASS for short... A multi-agent architecture for [OpenCode](https://opencode.a
 
 ## Overview
 
-The Aura Subagent Suite turns OpenCode from a single-agent assistant into a **coordinated engineering team**. A primary orchestrator agent (`aura`) decomposes user goals, delegates work to specialist subagents, and tracks progress across a configurable pipeline. Each subagent has strict boundaries — it can only do its specific job — which prevents scope creep and produces higher-quality results.
+The Aura Subagent Suite turns OpenCode from a single-agent assistant into a **coordinated engineering team** with two main capabilities:
 
-The system supports two modes of operation. For simple, well-scoped tasks, **Lightweight Mode** sends work directly to the right specialist. For complex features — anything requiring research, design, implementation, and verification — **Full Mode** runs a 5-gate pipeline that mirrors a real software development lifecycle.
+**Feature 1: Orchestrator (`aura`)** — A pipeline-based feature development system that decomposes user goals, delegates work to specialist subagents, and tracks progress across a configurable pipeline. Each subagent has strict boundaries — it can only do its specific job — which prevents scope creep and produces higher-quality results.
+
+**Feature 2: Councilor (`aura-council`)** — A multi-perspective advisory system based on the 16 Personalities framework. Press Tab to switch to Councilor, give it a question or decision, and it convenes 16 distinct personality types in parallel to deliver a synthesized report directly in the conversation.
 
 Five philosophy skills define shared quality standards that implementing and reviewing agents must load before working, ensuring consistency across code, design, and content.
 
 ---
 
-## Architecture
+## Feature 1: Orchestrator
+
+The Orchestrator feature is a pipeline-based system for building, reviewing, and shipping features. It uses `aura` as the primary orchestrator agent that delegates to specialist subagents through a structured workflow.
+
+### Architecture
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -78,7 +86,7 @@ The orchestrator (`aura`) never implements anything directly. It selects the app
 
 ---
 
-## Agent Roster
+### Agent Roster
 
 | Agent | Mode | Responsibility |
 |---|---|---|
@@ -89,7 +97,7 @@ The orchestrator (`aura`) never implements anything directly. It selects the app
 | `aura-designer` | subagent | Product design — UI/UX flows, wireframes, design tokens, component specs |
 | `aura-implementer` | subagent | Code generation — writes source files, refactors, patches existing code |
 | `aura-writer` | subagent | Content generation — documentation, marketing copy, changelogs, in-app text |
-| `aura-council` | subagent | Multi-perspective advisory. Orchestrates 16 personality-based council members in parallel to produce a compiled markdown report with synthesized perspectives across 4 cognitive groups. |
+| `aura-council` | **primary** | Multi-perspective advisory (Councilor). Orchestrates 16 personality-based council members in parallel to deliver synthesized insights across 4 cognitive groups. |
 | `aura-code-qa` | subagent | Test generation — unit/integration tests, edge-case analysis, test execution |
 | `aura-content-qa` | subagent | Content quality — grammar, spelling, tone consistency, SEO, factual accuracy |
 | `aura-reviewer` | subagent | Full-spectrum audit — security, correctness, conventions, design coherence, final sign-off |
@@ -100,7 +108,7 @@ A **custom slash command** is also available:
 
 ---
 
-## Mode Selection
+### Mode Selection
 
 The orchestrator assesses each task before choosing a workflow. If the user doesn't specify, it asks.
 
@@ -174,16 +182,18 @@ Philosophy skills define shared quality standards that subagents load at runtime
 
 ---
 
-## Councilor Feature
+## Feature 2: Councilor
 
 The **Councilor** is a multi-perspective analysis engine that convenes a panel of 16 distinct personality types across 4 cognitive groups to examine any question, decision, or problem — delivering synthesized insights directly in the conversation.
 
 ### How It Works
 
-1. **Invoke Councilor** — either directly (`@aura-council`) or by asking Aura to convene it.
-2. **Councilor analyzes** your prompt and optionally asks clarifying questions.
-3. **All 16 personality types are consulted in parallel** — each evaluating through their unique cognitive lens.
-4. **Councilor compiles a structured report** with an executive summary, all 16 perspectives organized by group, key tensions, cross-group themes, and open questions — delivered directly in the conversation.
+1. **Press Tab** until you reach Councilor.
+2. **Give it your prompt** — a question, decision, or problem to analyze.
+3. **Councilor analyzes** the prompt and optionally asks clarifying questions.
+4. **All 16 personality types are consulted in parallel** — each evaluating through their unique cognitive lens.
+5. **Councilor compiles a structured report** with an executive summary, all 16 perspectives organized by group, key tensions, cross-group themes, and open questions — delivered directly in the conversation.
+6. **Save to file (optional)** — include `(save: ./path.md)` in your prompt to persist the report.
 
 ### The 16 Council Members
 
@@ -197,10 +207,10 @@ The **Councilor** is a multi-perspective analysis engine that convenes a panel o
 ### Invocation Examples
 
 ```
-@aura-council Should we adopt microservices or stay monolithic?
-@aura-council (subset: architect, debater) Analyze our deployment pipeline
-@aura-council (subset: analysts) Strategy review for Q3 planning
-@aura-council (save: ./council-report.md) Strategy review for Q3
+Councilor: Should we adopt microservices or stay monolithic?
+Councilor (subset: architect, debater): Analyze our deployment pipeline
+Councilor (subset: analysts): Strategy review for Q3 planning
+Councilor (save: ./council-report.md): Full project risk assessment
 ```
 
 ### When to Use Councilor
@@ -264,7 +274,7 @@ Every pipeline gate produces a standardized artifact file. All artifacts live un
 
 ### Verifying the Setup
 
-Press **Tab** in OpenCode to see the agent list — `aura` should appear as one of the available agents. Ask a simple question; the orchestrator will select the appropriate mode and delegate to the right specialist.
+Press **Tab** in OpenCode to see the agent list — `aura` (Orchestrator) and `aura-council` (Councilor) should appear. Use `aura` for building features, or switch to Councilor for multi-perspective analysis.
 
 ---
 
@@ -292,13 +302,19 @@ This removes every file and folder that begins with `aura` from the `agents`, `s
 
 ## Usage
 
-### Basic Workflow
+### Orchestrator Workflow
 
 1. **Describe what you want built** — a feature, a fix, documentation, a design spec.
 2. **The orchestrator assesses the task** and chooses Lightweight Mode or Full Mode.
 3. **For simple tasks:** the orchestrator delegates directly to the appropriate subagent.
 4. **For complex tasks:** the 5-gate pipeline runs automatically — explore, design, create, verify, synthesize.
 5. **Review the results.** The `aura-reviewer` provides a structured audit report with severity-classified findings.
+
+### Councilor Workflow
+
+1. **Press Tab** until you reach Councilor.
+2. **Give it your prompt** — "Should we migrate to microservices?" or "Analyze our pricing model."
+3. **Councilor handles the rest** — analyzes, delegates to 16 members in parallel, compiles a structured report, and delivers it directly in the conversation.
 
 ### Examples
 
@@ -309,7 +325,7 @@ This removes every file and folder that begins with `aura` from the `agents`, `s
 | "Write a changelog for v2.1.0" | Lightweight | `aura-writer` |
 | "Build a new landing page with hero, features, and pricing sections" | Full (5-gate) | explore → designer → implementer → writer → reviewer |
 | "Find all places we handle errors inconsistently" | Lightweight | `aura-explore` |
-| "Get multi-perspective feedback through 16 cognitive lenses" | Lightweight (Council) | `aura-council` |
+| "Get multi-perspective feedback through 16 cognitive lenses" | Switch to Councilor | Press Tab → Councilor |
 
 ### Custom Commands
 

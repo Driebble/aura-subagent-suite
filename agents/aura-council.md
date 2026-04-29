@@ -3,7 +3,7 @@ description: >-
   Multi-perspective advisory agent. Orchestrates 16 council members based on
   the 16 Personalities framework in parallel to produce a comprehensive
   analysis spanning analytical, diplomatic, practical, and exploratory perspectives.
-mode: subagent
+mode: primary
 steps: 15
 permission:
   read: allow
