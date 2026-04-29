@@ -41,9 +41,9 @@ The Aura Subagent Suite turns OpenCode from a single-agent assistant into a **co
 
 **Feature 1: Orchestrator (`aura`)** — A pipeline-based feature development system that decomposes user goals, delegates work to specialist subagents, and tracks progress across a configurable pipeline. Each subagent has strict boundaries — it can only do its specific job — which prevents scope creep and produces higher-quality results.
 
-**Feature 2: Councilor (`aura-council`)** — A multi-perspective advisory system based on the 16 Personalities framework. Press Tab to switch to Councilor, give it a question or decision, and it convenes 16 distinct personality types in parallel to deliver a synthesized report directly in the conversation.
-
 Five philosophy skills define shared quality standards that implementing and reviewing agents must load before working, ensuring consistency across code, design, and content.
+
+**Feature 2: Councilor (`aura-council`)** — A multi-perspective advisory system based on the 16 Personalities framework. Press Tab to switch to Councilor, give it a question or decision, and it convenes 16 distinct personality types in parallel to deliver a synthesized report directly in the conversation.
 
 ## Why Aura?
 
@@ -291,15 +291,16 @@ This removes every file and folder that begins with `aura` from the `agents`, `s
 
 ### Orchestrator Workflow
 
-1. **Describe what you want built** — a feature, a fix, documentation, a design spec.
-2. **The orchestrator assesses the task** and chooses Lightweight Mode or Full Mode.
-3. **For simple tasks:** the orchestrator delegates directly to the appropriate subagent.
-4. **For complex tasks:** the 5-gate pipeline runs automatically — explore, design, create, verify, synthesize.
-5. **Review the results.** The `aura-reviewer` provides a structured audit report with severity-classified findings.
+1. **Press Tab** until you reach Aura.
+2. **Describe what you want built** — a feature, a fix, documentation, a design spec.
+3. **The orchestrator assesses the task** and chooses Lightweight Mode or Full Mode.
+4. **For simple tasks:** the orchestrator delegates directly to the appropriate subagent.
+5. **For complex tasks:** the 5-gate pipeline runs automatically — explore, design, create, verify, synthesize.
+6. **Review the results.** The `aura-reviewer` provides a structured audit report with severity-classified findings.
 
 ### Councilor Workflow
 
-1. **Press Tab** until you reach Councilor.
+1. **Press Tab** until you reach Aura-Council.
 2. **Give it your prompt** — "Should we migrate to microservices?" or "Analyze our pricing model."
 3. **Councilor handles the rest** — analyzes, delegates to 16 members in parallel, compiles a structured report, and delivers it directly in the conversation.
 
@@ -312,7 +313,7 @@ This removes every file and folder that begins with `aura` from the `agents`, `s
 | "Write a changelog for v2.1.0" | Lightweight | `aura-writer` |
 | "Build a new landing page with hero, features, and pricing sections" | Full (5-gate) | explore → designer → implementer → writer → reviewer |
 | "Find all places we handle errors inconsistently" | Lightweight | `aura-explore` |
-| "Get multi-perspective feedback through 16 cognitive lenses" | Switch to Councilor | Press Tab → Councilor |
+| "What do you think of the rise of AI in 2026?" | Switch to Councilor | Press Tab → Councilor |
 
 ### Custom Commands
 
