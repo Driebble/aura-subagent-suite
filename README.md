@@ -9,20 +9,26 @@ Or ASS for short... A multi-agent architecture for [OpenCode](https://opencode.a
 ## Table of Contents
 
 - [Overview](#overview)
+- [Why Aura?](#why-aura)
 - [Feature 1: Orchestrator](#feature-1-orchestrator)
   - [Architecture](#architecture)
   - [Agent Roster](#agent-roster)
   - [Mode Selection](#mode-selection)
+    - [Lightweight Mode](#lightweight-mode-plan--delegate--synthesize)
+    - [Full Mode (5-Gate Pipeline)](#full-mode-5-gate-pipeline)
+  - [Philosophy Skills](#philosophy-skills)
+  - [Artifact Contracts](#artifact-contracts)
 - [Feature 2: Councilor](#feature-2-councilor)
+  - [How It Works](#how-it-works)
   - [The 16 Council Members](#the-16-council-members)
-  - [Invocation Examples](#invocation-examples)
   - [When to Use Councilor](#when-to-use-councilor)
-- [Why Aura?](#why-aura)
-- [Philosophy Skills](#philosophy-skills)
-- [Artifact Contracts](#artifact-contracts)
 - [Getting Started](#getting-started)
 - [Uninstalling](#uninstalling)
 - [Usage](#usage)
+  - [Orchestrator Workflow](#orchestrator-workflow)
+  - [Councilor Workflow](#councilor-workflow)
+  - [Examples](#examples)
+  - [Custom Commands](#custom-commands)
 - [Project Structure](#project-structure)
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
@@ -38,6 +44,22 @@ The Aura Subagent Suite turns OpenCode from a single-agent assistant into a **co
 **Feature 2: Councilor (`aura-council`)** — A multi-perspective advisory system based on the 16 Personalities framework. Press Tab to switch to Councilor, give it a question or decision, and it convenes 16 distinct personality types in parallel to deliver a synthesized report directly in the conversation.
 
 Five philosophy skills define shared quality standards that implementing and reviewing agents must load before working, ensuring consistency across code, design, and content.
+
+## Why Aura?
+
+The Aura Subagent Suite was inspired by [**Kdco's OCX Workspace**](https://github.com/kdcokenny/opencode-workspace) — a feature-rich multi-agent harness that pioneered structured agent pipelines and philosophy-driven quality standards for OpenCode. OCX is powerful, but it comes with complexity: a separate CLI (`ocx`), package registries, profile management, model assignments, and a `opencode.jsonc` configuration.
+
+In my own experience, already working within a customized OpenCode environment, I realized the real value lies in an orchestrator and subagent layer that functions natively out-of-the-box. That's why I made Aura Subagent Suite and designed it to do exactly what I was looking for.
+
+**Aura takes a different approach:**
+
+- **Plug-n-play native** — Clone the repo, drop the folders into `~/.config/opencode/`, restart OpenCode. That's it. No `ocx` to install, no registries, no profile setup, no config editing.
+- **Zero configuration** — Aura integrates directly into your existing OpenCode setup without changing anything you've already configured. Your existing agents, skills, and commands stay exactly as they are — Aura's files just sit alongside them.
+- **Lightweight and focused** — Aura is pure markdown. No plugins, no MCP servers, no npm dependencies. Just agent definitions, skills, and a command.
+- **Highly customizable** — Since Aura is basically a collection of markdown files, every agent and skill is easy to tweak or extend. Everything follows the standard [OpenCode configuration](https://opencode.ai/docs) specifications.
+- **No lock-in** — Removing or modifying Aura is as simple as deleting files from your config directory. It stays out of your way and respects your existing setup.
+
+If OCX is a full operating system for your OpenCode environment, Aura is a well-made tool — it does what it needs to and stays out of your way.
 
 ---
 
@@ -84,8 +106,6 @@ The Orchestrator feature is a pipeline-based system for building, reviewing, and
 
 The orchestrator (`aura`) never implements anything directly. It selects the appropriate mode, fans out work to subagents via the Task tool, and compresses context between pipeline gates to manage token usage. Each subagent produces a standardized artifact file, creating a clear audit trail from start to finish.
 
----
-
 ### Agent Roster
 
 | Agent | Mode | Responsibility |
@@ -106,13 +126,11 @@ A **custom slash command** is also available:
 
 - `aura-review` — Runs code review via the reviewer agent. Supports reviewing specific files, staged changes (`git diff --cached`), or recent changes (`git diff HEAD~1`).
 
----
-
 ### Mode Selection
 
 The orchestrator assesses each task before choosing a workflow. If the user doesn't specify, it asks.
 
-### Lightweight Mode: Plan → Delegate → Synthesize
+#### Lightweight Mode: Plan → Delegate → Synthesize
 
 Best for **simple, well-scoped tasks** where a full pipeline is overkill — a single function change, a small bug fix, a quick content update.
 
@@ -133,12 +151,12 @@ Common lightweight task-to-agent delegations:
 - Final audit → `aura-reviewer`
 - Multi-perspective analysis → `aura-council`
 
-### Full Mode: 5-Gate Pipeline
+#### Full Mode: 5-Gate Pipeline
 
 Best for **complex features** requiring research, design, implementation, and verification — a new API endpoint, a landing page, a full feature module.
 
 | Gate | Phase | Agents | Artifacts Produced |
-|---|---|---|---|
+|---|---|---|---|---|
 | 0 | Setup | `aura-implementer` | Project directory created |
 | 1 | **Explore** | `aura-explore` + `aura-researcher` (parallel) | `aura-RESEARCH-CODE.md`, `aura-RESEARCH-WEB.md` |
 | 2 | **Design** | `aura-architect` + `aura-designer` (parallel) | `aura-ARCH.md`, `aura-SPEC.md` |
@@ -148,27 +166,7 @@ Best for **complex features** requiring research, design, implementation, and ve
 
 Each gate waits for all its subagents to complete before proceeding. Context is compressed between gates to stay within token limits. If a subagent fails, the orchestrator retries once, then falls back to the built-in `general` subagent, then reports to the user.
 
----
-
-## Why Aura?
-
-The Aura Subagent Suite was inspired by [**Kdco's OCX Workspace**](https://github.com/kdcokenny/opencode-workspace) — a feature-rich multi-agent harness that pioneered structured agent pipelines and philosophy-driven quality standards for OpenCode. OCX is powerful, but it comes with complexity: a separate CLI (`ocx`), package registries, profile management, model assignments, and a `opencode.jsonc` configuration.
-
-In my own experience, already working within a customized OpenCode environment, I realized the real value lies in an orchestrator and subagent layer that functions natively out-of-the-box. That's why I made Aura Subagent Suite and designed it to do exactly what I was looking for.
-
-**Aura takes a different approach:**
-
-- **Plug-n-play native** — Clone the repo, drop the folders into `~/.config/opencode/`, restart OpenCode. That's it. No `ocx` to install, no registries, no profile setup, no config editing.
-- **Zero configuration** — Aura integrates directly into your existing OpenCode setup without changing anything you've already configured. Your existing agents, skills, and commands stay exactly as they are — Aura's files just sit alongside them.
-- **Lightweight and focused** — Aura is pure markdown. No plugins, no MCP servers, no npm dependencies. Just agent definitions, skills, and a command.
-- **Highly customizable** — Since Aura is basically a collection of markdown files, every agent and skill is easy to tweak or extend. Everything follows the standard [OpenCode configuration](https://opencode.ai/docs) specifications.
-- **No lock-in** — Removing or modifying Aura is as simple as deleting files from your config directory. It stays out of your way and respects your existing setup.
-
-If OCX is a full operating system for your OpenCode environment, Aura is a well-made tool — it does what it needs to and stays out of your way.
-
----
-
-## Philosophy Skills
+### Philosophy Skills
 
 Philosophy skills define shared quality standards that subagents load at runtime via the `skill` tool. They act as a **constitution** — agents must reference them before writing or reviewing specific categories of work.
 
@@ -179,6 +177,22 @@ Philosophy skills define shared quality standards that subagents load at runtime
 | `aura-code-review` | `aura-reviewer` | All code audits | **4-Layer Review** — Correctness → Security → Performance → Style/Maintainability, with severity classification and ≥80% confidence threshold |
 | `aura-plan-protocol` | `aura` (orchestrator) | Multi-step plans in lightweight mode | **Structured Plan Format** — goal, context/decisions table, phased tasks with status markers, citations, single `<- CURRENT` task |
 | `aura-plan-review` | `aura-reviewer` | Auditing implementation plans | **Plan Quality Criteria** — citation completeness, actionability, goal clarity, status tracking correctness |
+
+### Artifact Contracts
+
+Every pipeline gate produces a standardized artifact file. All artifacts live under `PROJ_DIR/.aura/`, creating a complete audit trail from research through review.
+
+| Artifact | Producer | Contents |
+|---|---|---|
+| `aura-RESEARCH-CODE.md` | `aura-explore` | Codebase analysis — structure, patterns, relevant file paths |
+| `aura-RESEARCH-WEB.md` | `aura-researcher` | External research — web findings, API docs, references |
+| `aura-ARCH.md` | `aura-architect` | Architecture plan — system design, schemas, tech stack |
+| `aura-SPEC.md` | `aura-designer` | Design specification — flows, wireframes, design tokens |
+| `aura-CHANGES.md` | `aura-implementer` + `aura-writer` | Consolidated changes — `## Code Changes` + `## Content Changes` |
+| `aura-COUNCIL.md` | `aura-council` | Councilor report (optional) — saved only when requested via `(save:)` syntax; otherwise delivered in conversation |
+| `aura-TEST.md` | `aura-code-qa` | Test scaffold and execution results |
+| `aura-QA.md` | `aura-content-qa` | Content quality report — grammar, tone, facts, SEO |
+| `aura-REVIEW.md` | `aura-reviewer` | Final audit report — security, correctness, conventions, verdict |
 
 ---
 
@@ -204,39 +218,12 @@ The **Councilor** is a multi-perspective analysis engine that convenes a panel o
 | **🔵 Sentinels — Practical & Reliable** | The Logistician (ISTJ), The Defender (ISFJ), The Executive (ESTJ), The Consul (ESFJ) |
 | **🟠 Explorers — Spontaneous & Action-Oriented** | The Virtuoso (ISTP), The Adventurer (ISFP), The Entrepreneur (ESTP), The Entertainer (ESFP) |
 
-### Invocation Examples
-
-```
-Councilor: Should we adopt microservices or stay monolithic?
-Councilor (subset: architect, debater): Analyze our deployment pipeline
-Councilor (subset: analysts): Strategy review for Q3 planning
-Councilor (save: ./council-report.md): Full project risk assessment
-```
-
 ### When to Use Councilor
 
 - **Strategic decisions** — get rational analysis from Analysts and practical grounding from Sentinels
 - **Team or people decisions** — get empathetic insight from Diplomats
 - **Innovation or change** — get creative provocation from Explorers
 - **Any ambiguous problem** — see it through 16 different cognitive lenses
-
----
-
-## Artifact Contracts
-
-Every pipeline gate produces a standardized artifact file. All artifacts live under `PROJ_DIR/.aura/`, creating a complete audit trail from research through review.
-
-| Artifact | Producer | Contents |
-|---|---|---|
-| `aura-RESEARCH-CODE.md` | `aura-explore` | Codebase analysis — structure, patterns, relevant file paths |
-| `aura-RESEARCH-WEB.md` | `aura-researcher` | External research — web findings, API docs, references |
-| `aura-ARCH.md` | `aura-architect` | Architecture plan — system design, schemas, tech stack |
-| `aura-SPEC.md` | `aura-designer` | Design specification — flows, wireframes, design tokens |
-| `aura-CHANGES.md` | `aura-implementer` + `aura-writer` | Consolidated changes — `## Code Changes` + `## Content Changes` |
-| `aura-COUNCIL.md` | `aura-council` | Councilor report (optional) — saved only when requested via `(save:)` syntax; otherwise delivered in conversation |
-| `aura-TEST.md` | `aura-code-qa` | Test scaffold and execution results |
-| `aura-QA.md` | `aura-content-qa` | Content quality report — grammar, tone, facts, SEO |
-| `aura-REVIEW.md` | `aura-reviewer` | Final audit report — security, correctness, conventions, verdict |
 
 ---
 
