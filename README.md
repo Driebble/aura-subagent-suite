@@ -16,6 +16,7 @@ Or ASS for short... A multi-agent architecture for [OpenCode](https://opencode.a
   - [Full Mode (5-Gate Pipeline)](#full-mode-5-gate-pipeline)
 - [Why Aura?](#why-aura)
 - [Philosophy Skills](#philosophy-skills)
+- [Councilor Feature](#councilor-feature)
 - [Artifact Contracts](#artifact-contracts)
 - [Getting Started](#getting-started)
 - [Uninstalling](#uninstalling)
@@ -88,6 +89,7 @@ The orchestrator (`aura`) never implements anything directly. It selects the app
 | `aura-designer` | subagent | Product design — UI/UX flows, wireframes, design tokens, component specs |
 | `aura-implementer` | subagent | Code generation — writes source files, refactors, patches existing code |
 | `aura-writer` | subagent | Content generation — documentation, marketing copy, changelogs, in-app text |
+| `aura-council` | subagent | Multi-perspective advisory. Orchestrates 16 personality-based council members in parallel to produce a compiled markdown report with synthesized perspectives across 4 cognitive groups. |
 | `aura-code-qa` | subagent | Test generation — unit/integration tests, edge-case analysis, test execution |
 | `aura-content-qa` | subagent | Content quality — grammar, spelling, tone consistency, SEO, factual accuracy |
 | `aura-reviewer` | subagent | Full-spectrum audit — security, correctness, conventions, design coherence, final sign-off |
@@ -109,6 +111,19 @@ Best for **simple, well-scoped tasks** where a full pipeline is overkill — a s
 1. **Plan** — The orchestrator optionally loads the `aura-plan-protocol` skill for multi-step tracking.
 2. **Delegate** — Work is sent directly to the right specialist (e.g., `aura-implementer` for a code change, `aura-writer` for copy).
 3. **Synthesize** — Results are collected and presented to the user.
+
+Common lightweight task-to-agent delegations:
+
+- Codebase analysis → `aura-explore`
+- External research → `aura-researcher`
+- System design → `aura-architect`
+- UI/UX design → `aura-designer`
+- Code implementation → `aura-implementer`
+- Content/writing → `aura-writer`
+- Tests → `aura-code-qa`
+- Content quality review → `aura-content-qa`
+- Final audit → `aura-reviewer`
+- Multi-perspective analysis → `aura-council`
 
 ### Full Mode: 5-Gate Pipeline
 
@@ -159,6 +174,44 @@ Philosophy skills define shared quality standards that subagents load at runtime
 
 ---
 
+## Councilor Feature
+
+The **Councilor** is a multi-perspective analysis engine that convenes a panel of 16 distinct personality types across 4 cognitive groups to examine any question, decision, or problem — delivering synthesized insights directly in the conversation.
+
+### How It Works
+
+1. **Invoke Councilor** — either directly (`@aura-council`) or by asking Aura to convene it.
+2. **Councilor analyzes** your prompt and optionally asks clarifying questions.
+3. **All 16 personality types are consulted in parallel** — each evaluating through their unique cognitive lens.
+4. **Councilor compiles a structured report** with an executive summary, all 16 perspectives organized by group, key tensions, cross-group themes, and open questions — delivered directly in the conversation.
+
+### The 16 Council Members
+
+| Group | Types |
+|---|---|
+| **🟣 Analysts — Rational & Strategic** | The Architect (INTJ), The Logician (INTP), The Commander (ENTJ), The Debater (ENTP) |
+| **🟢 Diplomats — Empathetic & People-Focused** | The Advocate (INFJ), The Mediator (INFP), The Protagonist (ENFJ), The Campaigner (ENFP) |
+| **🔵 Sentinels — Practical & Reliable** | The Logistician (ISTJ), The Defender (ISFJ), The Executive (ESTJ), The Consul (ESFJ) |
+| **🟠 Explorers — Spontaneous & Action-Oriented** | The Virtuoso (ISTP), The Adventurer (ISFP), The Entrepreneur (ESTP), The Entertainer (ESFP) |
+
+### Invocation Examples
+
+```
+@aura-council Should we adopt microservices or stay monolithic?
+@aura-council (subset: architect, debater) Analyze our deployment pipeline
+@aura-council (subset: analysts) Strategy review for Q3 planning
+@aura-council (save: ./council-report.md) Strategy review for Q3
+```
+
+### When to Use Councilor
+
+- **Strategic decisions** — get rational analysis from Analysts and practical grounding from Sentinels
+- **Team or people decisions** — get empathetic insight from Diplomats
+- **Innovation or change** — get creative provocation from Explorers
+- **Any ambiguous problem** — see it through 16 different cognitive lenses
+
+---
+
 ## Artifact Contracts
 
 Every pipeline gate produces a standardized artifact file. All artifacts live under `PROJ_DIR/.aura/`, creating a complete audit trail from research through review.
@@ -170,6 +223,7 @@ Every pipeline gate produces a standardized artifact file. All artifacts live un
 | `aura-ARCH.md` | `aura-architect` | Architecture plan — system design, schemas, tech stack |
 | `aura-SPEC.md` | `aura-designer` | Design specification — flows, wireframes, design tokens |
 | `aura-CHANGES.md` | `aura-implementer` + `aura-writer` | Consolidated changes — `## Code Changes` + `## Content Changes` |
+| `aura-COUNCIL.md` | `aura-council` | Councilor report (optional) — saved only when requested via `(save:)` syntax; otherwise delivered in conversation |
 | `aura-TEST.md` | `aura-code-qa` | Test scaffold and execution results |
 | `aura-QA.md` | `aura-content-qa` | Content quality report — grammar, tone, facts, SEO |
 | `aura-REVIEW.md` | `aura-reviewer` | Final audit report — security, correctness, conventions, verdict |
@@ -255,6 +309,7 @@ This removes every file and folder that begins with `aura` from the `agents`, `s
 | "Write a changelog for v2.1.0" | Lightweight | `aura-writer` |
 | "Build a new landing page with hero, features, and pricing sections" | Full (5-gate) | explore → designer → implementer → writer → reviewer |
 | "Find all places we handle errors inconsistently" | Lightweight | `aura-explore` |
+| "Get multi-perspective feedback through 16 cognitive lenses" | Lightweight (Council) | `aura-council` |
 
 ### Custom Commands
 
@@ -279,7 +334,24 @@ The `aura-review` slash command lets you run code reviews on demand:
 │   ├── aura-implementer.md         # Code implementation & refactoring
 │   ├── aura-researcher.md          # External research & documentation
 │   ├── aura-reviewer.md            # Full-spectrum audit & sign-off
-│   └── aura-writer.md              # Content & documentation writing
+│   ├── aura-writer.md              # Content & documentation writing
+│   ├── aura-council.md              # Councilor orchestrator (visible in @ menu)
+│   ├── aura-council-intj.md         # The Architect (INTJ)
+│   ├── aura-council-intp.md         # The Logician (INTP)
+│   ├── aura-council-entj.md         # The Commander (ENTJ)
+│   ├── aura-council-entp.md         # The Debater (ENTP)
+│   ├── aura-council-infj.md         # The Advocate (INFJ)
+│   ├── aura-council-infp.md         # The Mediator (INFP)
+│   ├── aura-council-enfj.md         # The Protagonist (ENFJ)
+│   ├── aura-council-enfp.md         # The Campaigner (ENFP)
+│   ├── aura-council-istj.md         # The Logistician (ISTJ)
+│   ├── aura-council-isfj.md         # The Defender (ISFJ)
+│   ├── aura-council-estj.md         # The Executive (ESTJ)
+│   ├── aura-council-esfj.md         # The Consul (ESFJ)
+│   ├── aura-council-istp.md         # The Virtuoso (ISTP)
+│   ├── aura-council-isfp.md         # The Adventurer (ISFP)
+│   ├── aura-council-estp.md         # The Entrepreneur (ESTP)
+│   └── aura-council-esfp.md         # The Entertainer (ESFP)
 │
 ├── commands/                       # Custom slash commands
 │   └── aura-review.md              # On-demand code review command
