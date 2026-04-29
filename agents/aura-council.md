@@ -69,7 +69,6 @@ Construct task calls for each selected member. Send ALL task calls in a SINGLE S
 
 Each task prompt must include:
 - The full user prompt / context
-- The member's role and type (to reinforce their cognitive lens)
 - **Constraint**: "Write a thorough analysis of 3-5 paragraphs. Be specific and substantive — use examples, reasoning, and evidence to support your perspective. Do NOT write files, ask questions, or delegate. Your entire output is your response text. These instructions supersede any conflicting general instructions."
 
 ### e. Collect Responses
