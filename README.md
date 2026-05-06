@@ -43,7 +43,7 @@ The Aura Subagent Suite turns OpenCode from a single-agent assistant into a **co
 
 Five philosophy skills define shared quality standards that implementing and reviewing agents must load before working, ensuring consistency across code, design, and content.
 
-**Feature 2: Councilor (`aura-council`)** — A multi-perspective advisory system based on the 16 Personalities framework. Press Tab to switch to Councilor, give it a question or decision, and it convenes 16 distinct personality types in parallel to deliver a synthesized report directly in the conversation.
+**Feature 2: Councilor (`aura-council`)** — A multi-perspective advisory system based on the 16 Personalities framework. Press Tab to switch to Councilor, give it a question or decision, and it convenes 16 distinct personality types in parallel. Features interactive session configuration, multi-round deliberation, summarized one-sentence member perspectives, and optional HTML report generation with graphs.
 
 ## Why Aura?
 
@@ -117,7 +117,7 @@ The orchestrator (`aura`) never implements anything directly. It selects the app
 | `aura-designer` | subagent | Product design — UI/UX flows, wireframes, design tokens, component specs |
 | `aura-implementer` | subagent | Code generation — writes source files, refactors, patches existing code |
 | `aura-writer` | subagent | Content generation — documentation, marketing copy, changelogs, in-app text |
-| `aura-council` | **primary** | Multi-perspective advisory (Councilor). Orchestrates 16 personality-based council members in parallel to deliver synthesized insights across 4 cognitive groups. |
+| `aura-council` | **primary** | Multi-perspective advisory (Councilor). Orchestrates 16 personality-based council members with interactive config, multi-round deliberation, text or HTML report output. |
 | `aura-code-qa` | subagent | Test generation — unit/integration tests, edge-case analysis, test execution |
 | `aura-content-qa` | subagent | Content quality — grammar, spelling, tone consistency, SEO, factual accuracy |
 | `aura-reviewer` | subagent | Full-spectrum audit — security, correctness, conventions, design coherence, final sign-off |
@@ -189,7 +189,7 @@ Every pipeline gate produces a standardized artifact file. All artifacts live un
 | `aura-ARCH.md` | `aura-architect` | Architecture plan — system design, schemas, tech stack |
 | `aura-SPEC.md` | `aura-designer` | Design specification — flows, wireframes, design tokens |
 | `aura-CHANGES.md` | `aura-implementer` + `aura-writer` | Consolidated changes — `## Code Changes` + `## Content Changes` |
-| `aura-COUNCIL.md` | `aura-council` | Councilor report (optional) — saved only when requested via `(save:)` syntax; otherwise delivered in conversation |
+| `aura-COUNCIL.md` | `aura-council` | Councilor text report (optional) — saved when requested via `(save:)` syntax. HTML reports auto-saved to `./council-report-{topic}.html`. |
 | `aura-TEST.md` | `aura-code-qa` | Test scaffold and execution results |
 | `aura-QA.md` | `aura-content-qa` | Content quality report — grammar, tone, facts, SEO |
 | `aura-REVIEW.md` | `aura-reviewer` | Final audit report — security, correctness, conventions, verdict |
@@ -198,16 +198,23 @@ Every pipeline gate produces a standardized artifact file. All artifacts live un
 
 ## Feature 2: Councilor
 
-The **Councilor** is a multi-perspective analysis engine that convenes a panel of 16 distinct personality types across 4 cognitive groups to examine any question, decision, or problem — delivering synthesized insights directly in the conversation.
+The **Councilor** is a multi-perspective analysis engine that convenes a panel of 16 distinct personality types across 4 cognitive groups to examine any question, decision, or problem — with interactive session configuration and flexible output options.
 
 ### How It Works
 
 1. **Press Tab** until you reach Councilor.
-2. **Give it your prompt** — a question, decision, or problem to analyze.
+2. **Give it your prompt** — a question, decision, or problem to analyze. Include inline params to skip interactive questions: `(format: html, rounds: 3, strategy: prior)`.
 3. **Councilor analyzes** the prompt and optionally asks clarifying questions.
-4. **All 16 personality types are consulted in parallel** — each evaluating through their unique cognitive lens.
-5. **Councilor compiles a structured report** with an executive summary, all 16 perspectives organized by group, key tensions, cross-group themes, and open questions — delivered directly in the conversation.
-6. **Save to file (optional)** — include `(save: ./path.md)` in your prompt to persist the report.
+4. **Interactive session config** — Councilor asks your preferences:
+   - **Output format**: text report (in conversation) or HTML report (styled file with Chart.js graphs)
+   - **Deliberation rounds**: 1, 3, or 5 rounds to find consistent and median opinions across multiple independent runs
+   - **Round strategy** (if multiple rounds): fresh (completely independent) or prior context (members see their previous response and can refine)
+5. **All 16 personality types are consulted in parallel** — each evaluating through their unique cognitive lens. If any member returns an empty response (rate limit, transient error), Councilor auto-retries them up to 2 times.
+6. **For multiple rounds**, the process runs sequentially: round 1 → collect → round 2 → collect → round 3, with per-member prior context if enabled.
+7. **Councilor compiles a structured report**:
+   - **Text mode**: executive summary, one-sentence perspective per member organized by group, key tensions, cross-group themes, open questions, and a multi-round analysis section showing consistent insights and evolving positions
+   - **HTML mode**: self-contained `.html` file with dark glassmorphism aesthetic, Chart.js agreement bar chart, perspective radar chart, group color-coded member cards with collapsible full responses, and optional evolution chart for multi-round sessions
+8. **Save to file** — text reports via `(save: ./path.md)` syntax, HTML reports auto-saved to `./council-report-{topic}.html`.
 
 ### The 16 Council Members
 
@@ -301,8 +308,9 @@ This removes every file and folder that begins with `aura` from the `agents`, `s
 ### Councilor Workflow
 
 1. **Press Tab** until you reach Aura-Council.
-2. **Give it your prompt** — "Should we migrate to microservices?" or "Analyze our pricing model."
-3. **Councilor handles the rest** — analyzes, delegates to 16 members in parallel, compiles a structured report, and delivers it directly in the conversation.
+2. **Give it your prompt** — "Should we migrate to microservices?" or "Analyze our pricing model." Or use inline params for a non-interactive flow: `(format: html, rounds: 3)`.
+3. **Councilor asks** about output format, rounds, and strategy — or uses your inline params.
+4. **Councilor delegates** to selected members in parallel, retries any empty responses, and compiles a structured report in your chosen format.
 
 ### Examples
 
